@@ -7,19 +7,15 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb;
     private Collider2D col;
     public float jumpVelocity = 7;
-    public float weakJumpVelocity = 2;
     public float groundVelocity = 4;
     public float airVelocity = 2;
-    public float fallMod = 2.5f;
-    public float jumpLag = 0.6f;
+    public float fallMod = 1.5f;
 
     // Current state data, updated every frame
     public bool Grounded { get; private set; }
     private bool touchingLeft;
     private bool touchingRight;
     public bool FacingRight { get; private set; }
-    private float canJump;
-    private bool jumpUsed = false;
 
     // Input data
     private float horizontalInput;
@@ -71,28 +67,7 @@ public class PlayerController : MonoBehaviour
         // Jumping with delay 
         if (JumpPressed && Grounded)
         {
-            canJump = Time.time + jumpLag;
-        }
-
-        if (JumpHeld)
-        { 
-            if (canJump > 0 && Time.time > canJump && Grounded)
-            {
-                if (!jumpUsed)
-                {
-                    rb.velocity = new Vector2(rb.velocity.x, Vector2.up.y * jumpVelocity);
-                    jumpUsed = true;
-                }
-                else
-                {
-                    rb.velocity = new Vector2(rb.velocity.x, Vector2.up.y * weakJumpVelocity);
-                }
-                canJump = 0.0f;
-            }
-            else if (canJump > 0 && !Grounded)
-            {
-                canJump = 0.0f;
-            }
+            rb.velocity = new Vector2(rb.velocity.x, Vector2.up.y * jumpVelocity);
         }
 
         // Faster falling for more weightiness
@@ -102,7 +77,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void OnTriggerStay2D(Collider other)
+    private void OnTriggerStay2D(Collider2D other)
     {
         if (other.tag == "Platform")
         {
@@ -110,7 +85,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void OnTriggerExit2D(Collider other)
+    private void OnTriggerExit2D(Collider2D other)
     {
         if (other.tag == "Platform")
         {
@@ -140,13 +115,13 @@ public class PlayerController : MonoBehaviour
         Vector2 leftBottom = new Vector2(transform.position.x - col.bounds.extents.x, transform.position.y - col.bounds.extents.y);
         touchingLeft = false;
         // Debug.Log(bottom.x + ", " + bottom.y);
-        results = Physics2D.LinecastAll(leftTop + new Vector2(-offset, 0.1f), leftBottom + new Vector2(-offset, 0));
+        results = Physics2D.LinecastAll(leftTop + new Vector2(-offset, 0.1f), leftBottom + new Vector2(-offset, 0.1f));
         foreach (RaycastHit2D result in results)
         {
             if (result.collider != col && !result.collider.isTrigger)
             {
                 touchingLeft = true;
-                //Debug.Log("BEEP BOOP I'M TOUCHING THE LEFT WALL");
+                Debug.Log("BEEP BOOP I'M TOUCHING THE LEFT WALL");
             }
         }
 
@@ -155,13 +130,13 @@ public class PlayerController : MonoBehaviour
         touchingRight = false;
         // Debug.Log(bottom.x + ", " + bottom.y);
 
-        results = Physics2D.LinecastAll(rightTop + new Vector2(offset, 0.1f), rightBottom + new Vector2(offset, 0));
+        results = Physics2D.LinecastAll(rightTop + new Vector2(offset, 0.1f), rightBottom + new Vector2(offset, 0.1f));
         foreach (RaycastHit2D result in results)
         {
             if (result.collider != col && !result.collider.isTrigger)
             {
                 touchingRight = true;
-                //Debug.Log("BEEP BOOP I'M TOUCHING THE RIGHT WALL");
+                Debug.Log("BEEP BOOP I'M TOUCHING THE RIGHT WALL");
             }
         }
     }
