@@ -24,7 +24,9 @@ public class GunControl : MonoBehaviour
     public void Update()
     {
         mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-        Debug.Log(mousePos.ToString());
+        Debug.Log("squeak: " + mousePos.ToString());
+        Debug.Log("shoulder: " + leftShoulder.position);
+        Debug.Log("elbow noise: " + leftElbow.position);
         double aimAngle = FindAimAngle(leftShoulder.position, leftElbow.position, mousePos);
         Debug.Log(aimAngle);
         Vector3 rotate = new Vector3(0, 0, (float)aimAngle);
@@ -47,16 +49,19 @@ public class GunControl : MonoBehaviour
         double lengthToMidpoint;
         if (numIntersects == 2)
         {
+            Debug.Log("jabroni time");
             lengthToMidpoint = Math.Min(Dist2D(elbow, intersect1), Dist2D(elbow, intersect2)) / 2;
         }
         else if (numIntersects == 1)
         {
+            Debug.Log("merry christmas");
             lengthToMidpoint = Dist2D(elbow, intersect1) / 2;
         }
         else
         {
             return 0;
         }
+        Debug.Log("We gotta angle here, between " + pivot + " and " + elbow + ". Length to mid is " + lengthToMidpoint + " and dist is " + Dist2D(pivot, elbow));
         return Math.Acos(lengthToMidpoint / Dist2D(pivot, elbow)) * 2;
     }
 
