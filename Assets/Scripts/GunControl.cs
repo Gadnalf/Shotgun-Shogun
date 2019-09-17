@@ -1,9 +1,9 @@
 ﻿using System;
 using UnityEngine;
 
-public class Dist : MonoBehaviour
+public class GunControl : MonoBehaviour
 {
-    public Vector3 mousePos { get; private set; }
+    Vector3 mousePos;
     public Camera mainCamera;
 
     Transform leftShoulder;
@@ -11,20 +11,19 @@ public class Dist : MonoBehaviour
     Transform leftPoint;
     Transform rightPoint;
 
-    public Vector3 leftOffset;
-
     public void Start()
     {
         rightShoulder = transform.Find("Right Shoulder");
         rightPoint = rightShoulder.Find("Hand");
         leftShoulder = transform.Find("Left Shoulder");
-        leftPoint = leftShoulder.Find("Gun").Find("Muzzle");
+        leftPoint = leftShoulder.Find("Muzzle");
     }
 
-	public void Update()
-	{
+    public void Update()
+    {
         mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-        Vector3 rotate = new Vector3(0,0,3);
+        double aimAngle = FindAimAngle(Vector3.zero, new Vector3(0, leftPoint.position.y, 0), mousePos);
+        Vector3 rotate = new Vector3(0, 0, (float)aimAngle);
         rightShoulder.Rotate(rotate);
         leftShoulder.Rotate(rotate);
     }
@@ -36,8 +35,21 @@ public class Dist : MonoBehaviour
 
     private double FindAimAngle(Vector3 pivot, Vector3 elbow, Vector3 target)
     {
-
-        return 0;
+        Vector3 intersect1, intersect2;
+        double lengthToMidpoint;
+        if (FindIntersectOfCircles(pivot, Dist2D(pivot, elbow), target, Dist2D(pivot, target) / 2, out intersect1, out intersect2) == 2)
+        {
+            lengthToMidpoint = Math.Min(Dist2D(elbow, intersect1), Dist2D(elbow, intersect2)) / 2;
+        }
+        else if (FindIntersectOfCircles(pivot, Dist2D(pivot, elbow), target, Dist2D(pivot, target) / 2, out intersect1, out intersect2) == 1)
+        {
+            lengthToMidpoint = Dist2D(elbow, intersect1) / 2;
+        }
+        else
+        {
+            return 0;
+        }
+        return Math.Acos(lengthToMidpoint / Dist2D(pivot, elbow)) * 2;
     }
 
     private int FindIntersectOfCircles(Vector3 center1, double radius1, Vector3 center2, double radius2, out Vector3 intersect1, out Vector3 intersect2)
@@ -64,23 +76,17 @@ public class Dist : MonoBehaviour
             double h = Math.Sqrt(Math.Pow(radius1, 2) - Math.Pow(a, 2));
 
             Vector3 direction = (center1 - center2).normalized;
-            direction.Scale(new Vector3((float) a, (float) a, 0));
+            direction.Scale(new Vector3((float)a, (float)a, 0));
 
             Vector3 vert = (center1 - center2).normalized;
             Vector3 avert = vert;
-            vert.Scale(new Vector3((float) h, (float) -h, 0));
-            avert.Scale(new Vector3((float) -h,(float) h, 0));
-            
+            vert.Scale(new Vector3((float)h, (float)-h, 0));
+            avert.Scale(new Vector3((float)-h, (float)h, 0));
+
             intersect1 = center1 + direction + vert;
             intersect2 = center1 + direction + avert;
             return 2;
         }
-        
-    }
 
-    //private void FindTarget(Transform shoulder, Transform point, Vector3 target)
-    //{
-    //    double distBetween = Math.Sqrt(Math.Pow(shoulder.position.x - target.position.x, 2) + Math.Pow(shoulder.position.x - target.position.x, 2));
-    //    double angleToTarget = Math.Acos(1 / distBetween);
-    //}
+    }
 }
