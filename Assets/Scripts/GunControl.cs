@@ -19,6 +19,9 @@ public class GunControl : MonoBehaviour
         leftShoulder = transform.Find("Left Shoulder");
         leftPoint = leftShoulder.Find("Muzzle");
         leftElbow = leftShoulder.Find("Elbow");
+        Debug.Log("sh: " + leftShoulder.position);
+        Debug.Log("mz: " + leftPoint.position);
+        Debug.Log("bow: " + leftElbow.position);
     }
 
     public void Update()
@@ -36,7 +39,7 @@ public class GunControl : MonoBehaviour
 
     private double Dist2D(Vector3 a, Vector3 b)
     {
-        return Math.Sqrt(Math.Pow(a.x - b.x, 2) * Math.Pow(a.y - b.y, 2));
+        return Math.Sqrt(Math.Pow(a.x - b.x, 2) + Math.Pow(a.y - b.y, 2));
     }
 
     private double FindAimAngle(Vector3 pivot, Vector3 elbow, Vector3 target)
@@ -49,16 +52,22 @@ public class GunControl : MonoBehaviour
         double lengthToMidpoint;
         if (numIntersects == 2)
         {
-            Debug.Log("jabroni time");
+            Debug.Log("jabroni time: " + intersect1 + intersect2);
             lengthToMidpoint = Math.Min(Dist2D(elbow, intersect1), Dist2D(elbow, intersect2)) / 2;
         }
         else if (numIntersects == 1)
         {
-            Debug.Log("merry christmas");
+            Debug.Log("merry christmas: " + intersect1);
             lengthToMidpoint = Dist2D(elbow, intersect1) / 2;
         }
         else
         {
+            return 0;
+        }
+
+        if (Dist2D(pivot, elbow) <= 0)
+        {
+            Debug.Log("wait, what the fuck?");
             return 0;
         }
         Debug.Log("We gotta angle here, between " + pivot + " and " + elbow + ". Length to mid is " + lengthToMidpoint + " and dist is " + Dist2D(pivot, elbow));
@@ -81,6 +90,7 @@ public class GunControl : MonoBehaviour
         }
         else if (dist == radius1 + radius2) // One intersect
         {
+            Debug.Log("what wizardry is this");
             Vector3 direction = new Vector3((center1 - center2).normalized.x * (float) radius1, (center1 - center2).normalized.y * (float) radius1, 0);
             intersect1 = center1 + direction;
             intersect2 = center1;
