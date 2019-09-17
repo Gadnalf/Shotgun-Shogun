@@ -83,7 +83,7 @@ public class GunControl : MonoBehaviour
             Debug.Log("there's fuckery afoot");
             Debug.Log("too far?" + (dist > radius1 + radius2));
             Debug.Log("one circle in the other somehow?" + (dist < Math.Abs(radius1 - radius2)));
-            Debug.Log("on point?" + (dist == 0));
+            Debug.Log("same pivot?" + (dist == 0));
             intersect1 = center1;
             intersect2 = center1;
             return 0;
