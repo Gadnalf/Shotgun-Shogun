@@ -27,14 +27,14 @@ public class GunControl : MonoBehaviour
     public void Update()
     {
         mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-        Debug.Log("squeak: " + mousePos.ToString());
-        Debug.Log("shoulder: " + leftShoulder.position);
-        Debug.Log("elbow noise: " + leftElbow.position);
-        double aimAngle = FindAimAngle(leftShoulder.position, leftElbow.position, mousePos);
-        Debug.Log(aimAngle);
+        //Debug.Log("squeak: " + mousePos.ToString());
+        //Debug.Log("shoulder: " + leftShoulder.position);
+        //Debug.Log("elbow noise: " + leftElbow.position);
+        double aimAngle = FindAimAngle(leftShoulder.position, leftElbow.position, mousePos) * (180 / Math.PI);
+        Debug.Log("angle time: " + aimAngle);
         Vector3 rotate = new Vector3(0, 0, (float)aimAngle);
-        rightShoulder.Rotate(rotate);
-        leftShoulder.Rotate(rotate);
+        //rightShoulder.Rotate(rotate);
+        //leftShoulder.Rotate(rotate);
     }
 
     private double Dist2D(Vector3 a, Vector3 b)
@@ -46,18 +46,18 @@ public class GunControl : MonoBehaviour
     {
         Vector3 intersect1, intersect2;
         Vector3 mid = new Vector3((pivot.x + target.x)/2, (pivot.y + target.y) / 2, 0);
-        Debug.Log("full distance: " + Dist2D(pivot, target));
-        Debug.Log("mid distance: " + Dist2D(pivot, mid));
+        //Debug.Log("full distance: " + Dist2D(pivot, target));
+        //Debug.Log("mid distance: " + Dist2D(pivot, mid));
         int numIntersects = FindIntersectOfCircles(pivot, Dist2D(pivot, elbow), mid, Dist2D(pivot, mid), out intersect1, out intersect2);
         double lengthToMidpoint;
         if (numIntersects == 2)
         {
-            Debug.Log("jabroni time: " + intersect1 + intersect2);
+            //Debug.Log("jabroni time: " + intersect1 + intersect2);
             lengthToMidpoint = Math.Min(Dist2D(elbow, intersect1), Dist2D(elbow, intersect2)) / 2;
         }
         else if (numIntersects == 1)
         {
-            Debug.Log("merry christmas: " + intersect1);
+            //Debug.Log("merry christmas: " + intersect1);
             lengthToMidpoint = Dist2D(elbow, intersect1) / 2;
         }
         else

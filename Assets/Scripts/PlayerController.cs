@@ -1,6 +1,6 @@
 ﻿using System;
 using UnityEngine;
-using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -141,9 +141,14 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public float getHorizontalSpeed()
+    public float GetHorizontalSpeed()
     {
         return Math.Abs(rb.velocity.x);
+    }
+
+    public void Kill()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
     
 }

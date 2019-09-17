@@ -11,7 +11,7 @@ public class KillTriggerScript : MonoBehaviour
     {
         if (collision.tag == "Player")
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            collision.GetComponent<PlayerController>().Kill();
         }
     }
 }
