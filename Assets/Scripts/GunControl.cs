@@ -19,9 +19,6 @@ public class GunControl : MonoBehaviour
         leftShoulder = transform.Find("Left Shoulder");
         leftPoint = leftShoulder.Find("Muzzle");
         leftElbow = leftShoulder.Find("Elbow");
-        Debug.Log("sh: " + leftShoulder.position);
-        Debug.Log("mz: " + leftPoint.position);
-        Debug.Log("bow: " + leftElbow.position);
     }
 
     public void Update()
@@ -31,7 +28,6 @@ public class GunControl : MonoBehaviour
         //Debug.Log("shrug: " + leftShoulder.position);
         //Debug.Log("elbow noise: " + leftElbow.position);
         double aimAngle = FindAimAngle(leftShoulder.position, leftElbow.position, mousePos) * (180 / Math.PI);
-        Debug.Log("angle time: " + aimAngle);
         Vector3 rotate = new Vector3(0, 0, (float)aimAngle);
         //rightShoulder.Rotate(rotate);
         leftShoulder.Rotate(rotate);
@@ -90,7 +86,10 @@ public class GunControl : MonoBehaviour
         }
         //Debug.Log("We gotta angle here, between " + pivot + " and " + intersect1 + " or " + intersect2 + ". Length to mid is " + lengthToMidpoint);
         double returnAngle = ((90 * Math.PI / 180) - Math.Acos(lengthToMidpoint / Dist2D(pivot, elbow))) * 2;
-        if (newElbow.y < elbow.y)
+
+        double cross = ((elbow.x - pivot.x) * (newElbow.y - elbow.y)) - ((elbow.y - pivot.y) * (newElbow.x - elbow.x));
+
+        if (cross < 0)
         {
             return returnAngle * -1;
         }
@@ -104,17 +103,17 @@ public class GunControl : MonoBehaviour
 
         if (dist > radius1 + radius2 | dist < Math.Abs(radius1 - radius2) | dist == 0) // There's some fuckery afoot
         {
-            Debug.Log("there's fuckery afoot");
-            Debug.Log("too far? " + (dist > radius1 + radius2));
-            Debug.Log("one circle in the other somehow? " + (dist < Math.Abs(radius1 - radius2)));
-            Debug.Log("same pivot? " + (dist == 0));
+            //Debug.Log("there's fuckery afoot");
+            //Debug.Log("too far? " + (dist > radius1 + radius2));
+            //Debug.Log("one circle in the other somehow? " + (dist < Math.Abs(radius1 - radius2)));
+            //Debug.Log("same pivot? " + (dist == 0));
             intersect1 = center1;
             intersect2 = center1;
             return 0;
         }
         else if (dist == radius1 + radius2) // One intersect
         {
-            Debug.Log("what wizardry is this");
+            //Debug.Log("lucky you");
             Vector3 direction = new Vector3((center1 - center2).normalized.x * (float) radius1, (center1 - center2).normalized.y * (float) radius1, 0);
             intersect1 = center1 + direction;
             intersect2 = center1;
