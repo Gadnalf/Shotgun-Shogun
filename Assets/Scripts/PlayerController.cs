@@ -59,12 +59,14 @@ public class PlayerController : MonoBehaviour
         }
 
         // Check if player is touching a wall before applying horizontal movement
-        if (horizontalInput < 0 && !touchingLeft || horizontalInput > 0 && !touchingRight)
-        {
-            rb.velocity = new Vector2(horizontalMovement, rb.velocity.y);
-        }
+        //if (horizontalInput < 0 && !touchingLeft || horizontalInput > 0 && !touchingRight)
+        //{
+        //    rb.velocity = new Vector2(horizontalMovement, rb.velocity.y);
+        //}
 
-        // Jumping with delay 
+        rb.velocity = new Vector2(horizontalMovement, rb.velocity.y);
+
+        // Grounded jump
         if (JumpPressed && Grounded)
         {
             rb.velocity = new Vector2(rb.velocity.x, Vector2.up.y * jumpVelocity);
