@@ -109,6 +109,7 @@ public class GunControl : MonoBehaviour
             //Debug.Log("same pivot? " + (dist == 0));
             intersect1 = center1;
             intersect2 = center1;
+
             return 0;
         }
         else if (dist == radius1 + radius2) // One intersect

@@ -25,7 +25,11 @@ public class SimpleProjectile : MonoBehaviour
         if (damageScript != null)
         {
             damageScript.Damage(1);
+        }
+        if (hitScript != null)
+        {
             hitScript.Hit(direction, 1);
         }
+        Destroy(gameObject);
     }
 }
