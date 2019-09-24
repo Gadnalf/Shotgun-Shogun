@@ -5,6 +5,9 @@ public class GunControl : MonoBehaviour
 {
     Vector3 mousePos;
     public Camera mainCamera;
+    public GameObject bullet;
+    public float spread;
+    public int pellets;
 
     Transform leftShoulder;
     Transform rightShoulder;
@@ -31,6 +34,10 @@ public class GunControl : MonoBehaviour
         Vector3 rotate = new Vector3(0, 0, (float)aimAngle);
         //rightShoulder.Rotate(rotate);
         leftShoulder.Rotate(rotate);
+        if (Input.GetButtonDown("Fire1"))
+        {
+            Shoot();
+        }
     }
 
     private double Dist2D(Vector3 a, Vector3 b)
@@ -136,5 +143,28 @@ public class GunControl : MonoBehaviour
             return 2;
         }
 
+    }
+
+    void Shoot()
+    {
+        Debug.Log("bang");
+        float increment = spread / pellets;
+
+        if (pellets % 2 == 1)
+        {
+            for (int i = 0; i < pellets; i++)
+            {
+                Instantiate(bullet, leftPoint.position, Quaternion.Euler(leftShoulder.rotation.eulerAngles + new Vector3(0,0,increment * i)));
+                if (i > 0)
+                {
+                    Instantiate(bullet, leftPoint.position, Quaternion.Euler(leftShoulder.rotation.eulerAngles + new Vector3(0, 0, increment * i)));
+                }
+            }
+        }
+        else
+        {
+            Debug.Log("Even");
+        }
+        
     }
 }
