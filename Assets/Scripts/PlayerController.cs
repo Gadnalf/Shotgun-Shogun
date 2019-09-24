@@ -123,7 +123,7 @@ public class PlayerController : MonoBehaviour, IKillable
             if (result.collider != col && !result.collider.isTrigger)
             {
                 touchingLeft = true;
-                Debug.Log("BEEP BOOP I'M TOUCHING THE LEFT WALL");
+                //Debug.Log("BEEP BOOP I'M TOUCHING THE LEFT WALL");
             }
         }
 
@@ -138,7 +138,7 @@ public class PlayerController : MonoBehaviour, IKillable
             if (result.collider != col && !result.collider.isTrigger)
             {
                 touchingRight = true;
-                Debug.Log("BEEP BOOP I'M TOUCHING THE RIGHT WALL");
+                //Debug.Log("BEEP BOOP I'M TOUCHING THE RIGHT WALL");
             }
         }
     }
