@@ -9,6 +9,8 @@ public class GunControl : MonoBehaviour
     public float spread;
     public int pellets;
 
+    private bool isFlipped = false;
+
     Transform leftShoulder;
     Transform rightShoulder;
     Transform leftPoint;
@@ -27,10 +29,17 @@ public class GunControl : MonoBehaviour
     public void Update()
     {
         mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
+        if(((mousePos.x - transform.position.x) > 0 && isFlipped) || ((mousePos.x - transform.position.x) < 0 && !isFlipped))
+        {
+            transform.Rotate(new Vector3(0, 180, 0));
+            isFlipped = !isFlipped;
+        }
         //Debug.Log("squeak: " + mousePos.ToString());
         //Debug.Log("shrug: " + leftShoulder.position);
         //Debug.Log("elbow noise: " + leftElbow.position);
-        double aimAngle = FindAimAngle(leftShoulder.position, leftElbow.position, mousePos) * (180 / Math.PI);
+
+        double aimAngle = FindAimAngle(leftShoulder.position, leftElbow.position, mousePos, isFlipped) * (180 / Math.PI);
+
         Vector3 rotate = new Vector3(0, 0, (float)aimAngle);
         //rightShoulder.Rotate(rotate);
         leftShoulder.Rotate(rotate);
@@ -45,7 +54,7 @@ public class GunControl : MonoBehaviour
         return Math.Sqrt(Math.Pow(a.x - b.x, 2) + Math.Pow(a.y - b.y, 2));
     }
 
-    private double FindAimAngle(Vector3 pivot, Vector3 elbow, Vector3 target)
+    private double FindAimAngle(Vector3 pivot, Vector3 elbow, Vector3 target, bool isFlipped)
     {
         Vector3 intersect1, intersect2;
         Vector3 mid = new Vector3((pivot.x + target.x)/2, (pivot.y + target.y) / 2, 0);
@@ -96,7 +105,7 @@ public class GunControl : MonoBehaviour
 
         double cross = ((elbow.x - pivot.x) * (newElbow.y - elbow.y)) - ((elbow.y - pivot.y) * (newElbow.x - elbow.x));
 
-        if (cross < 0)
+        if (cross < 0 && !isFlipped || cross > 0 && isFlipped)
         {
             return returnAngle * -1;
         }
@@ -148,16 +157,19 @@ public class GunControl : MonoBehaviour
     void Shoot()
     {
         Debug.Log("bang");
-        float increment = spread / pellets;
+        float increment = spread / pellets / 2f;
 
         if (pellets % 2 == 1)
         {
-            for (int i = 0; i < pellets; i++)
+            for (int i = 1; i <= pellets; i++)
             {
-                Instantiate(bullet, leftPoint.position, Quaternion.Euler(leftShoulder.rotation.eulerAngles + new Vector3(0,0,increment * i)));
-                if (i > 0)
+                if (i % 2 == 0)
                 {
-                    Instantiate(bullet, leftPoint.position, Quaternion.Euler(leftShoulder.rotation.eulerAngles + new Vector3(0, 0, increment * i)));
+                    Instantiate(bullet, leftPoint.position, Quaternion.Euler(leftShoulder.rotation.eulerAngles - new Vector3(0, 0, increment * (i / 2))));
+                }
+                else
+                {
+                    Instantiate(bullet, leftPoint.position, Quaternion.Euler(leftShoulder.rotation.eulerAngles + new Vector3(0, 0, increment * (i / 2))));
                 }
             }
         }
