@@ -29,10 +29,15 @@ public class GunControl : MonoBehaviour
     public void Update()
     {
         mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-        if(((mousePos.x - transform.position.x) > 0 && isFlipped) || ((mousePos.x - transform.position.x) < 0 && !isFlipped))
+        if((mousePos.x - transform.position.x) > 0 && isFlipped)
         {
             transform.Rotate(new Vector3(0, 180, 0));
-            isFlipped = !isFlipped;
+            isFlipped = false;
+        }
+        else if ((mousePos.x - transform.position.x) < 0 && !isFlipped)
+        {
+            transform.Rotate(new Vector3(0, 180, 0));
+            isFlipped = true;
         }
         //Debug.Log("squeak: " + mousePos.ToString());
         //Debug.Log("shrug: " + leftShoulder.position);
