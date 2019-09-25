@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
     public float groundVelocity = 4;
     public float airVelocity = 2;
     public float fallMod = 1.5f;
+    public float maxSlideTime = 1;
 
     // Current state data, updated every frame
     public bool Grounded { get; private set; }
@@ -22,8 +23,11 @@ public class PlayerController : MonoBehaviour
 
     // Input data
     private float horizontalInput;
-    public bool JumpPressed { get; private set; }
-    private bool JumpHeld;
+    private bool jumpPressed;
+    private bool jumpHeld;
+    private bool duckPressed;
+    private bool duckHeld;
+    private bool shoot;
 
     private void Start()
     {
@@ -35,14 +39,24 @@ public class PlayerController : MonoBehaviour
     {
         CheckBounds();
         horizontalInput = Input.GetAxis("Horizontal");
-        JumpPressed = Input.GetButtonDown("Jump");
-        JumpHeld = Input.GetButton("Jump");
+        if (Input.GetButtonDown("Jump"))
+        {
+            jumpPressed = true;
+        }
+        jumpHeld = Input.GetButton("Jump");
+        duckHeld = Input.GetAxis("Vertical") < 0;
+        shoot = Input.GetButtonDown("Fire1");
+    }
 
+    private void FixedUpdate()
+    {
         float horizontalMovement;
 
-        // The following code is horrible yet I cannot think of a way to make it less so.
-        // Set horizontal speed modifier
-        if (Grounded)
+        if (duckHeld && Grounded)
+        {
+            horizontalMovement = rb.velocity.x;
+        }
+        else if (Grounded)
         {
             horizontalMovement = horizontalInput * groundVelocity;
         }
@@ -61,22 +75,17 @@ public class PlayerController : MonoBehaviour
             FacingRight = true;
         }
 
-        // Check if player is touching a wall before applying horizontal movement
-        //if (horizontalInput < 0 && !touchingLeft || horizontalInput > 0 && !touchingRight)
-        //{
-        //    rb.velocity = new Vector2(horizontalMovement, rb.velocity.y);
-        //}
-
         rb.velocity = new Vector2(horizontalMovement, rb.velocity.y);
 
         // Grounded jump
-        if (JumpPressed && Grounded)
+        if (jumpPressed && Grounded)
         {
             rb.velocity = new Vector2(rb.velocity.x, Vector2.up.y * jumpVelocity);
+            jumpPressed = false;
         }
 
         // Faster falling for more weightiness
-        if (!JumpHeld || rb.velocity.y < 0)
+        if (!jumpHeld || rb.velocity.y < 0)
         {
             rb.velocity += Vector2.up * Physics2D.gravity.y * (fallMod - 1) * Time.deltaTime;
         }
@@ -98,6 +107,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // Updates state data if player is touching anything
     private void CheckBounds()
     {
         float offset = 0.03f;

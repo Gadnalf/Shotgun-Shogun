@@ -20,6 +20,6 @@ public class PlayerGraphics : MonoBehaviour
         spriteRenderer.flipX = !(playerController.FacingRight);
         animator.SetBool("isWalking", (playerController.GetHorizontalSpeed() > 0.3f) && playerController.Grounded);
         animator.SetFloat("horizontalSpeed", playerController.GetHorizontalSpeed());
-        animator.SetBool("isJumping", playerController.JumpPressed);
+        //animator.SetBool("isJumping", playerController.jumpPressed);
     }
 }
