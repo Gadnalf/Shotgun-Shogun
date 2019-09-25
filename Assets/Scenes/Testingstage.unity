@@ -459,7 +459,7 @@ GameObject:
   - component: {fileID: 757515647}
   - component: {fileID: 757515649}
   - component: {fileID: 757515646}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Test Dummy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
