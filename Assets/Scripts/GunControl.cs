@@ -78,7 +78,7 @@ public class GunControl : MonoBehaviour
             //Debug.Log("jabroni time: " + intersect1 + intersect2);
             double dist1 = Dist2D(elbow, intersect1);
             double dist2 = Dist2D(elbow, intersect2);
-            if (dist1 <= dist2)
+            if (intersect1.y < intersect2.y)
             {
                 lengthToMidpoint = dist1 / 2;
                 newElbow = intersect1;
@@ -92,8 +92,9 @@ public class GunControl : MonoBehaviour
         else if (numIntersects == 1)
         {
             //Debug.Log("merry christmas: " + intersect1);
-            lengthToMidpoint = Dist2D(elbow, intersect1) / 2;
-            newElbow = intersect1;
+            //lengthToMidpoint = Dist2D(elbow, intersect1) / 2;
+            //newElbow = intersect1;
+            return 0;
         }
         else
         {
