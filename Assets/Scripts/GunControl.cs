@@ -161,7 +161,6 @@ public class GunControl : MonoBehaviour
 
     void Shoot()
     {
-        Debug.Log("bang");
         float increment = spread / pellets / 2f;
 
         if (pellets % 2 == 1)

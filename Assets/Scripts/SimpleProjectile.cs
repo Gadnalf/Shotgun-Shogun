@@ -23,8 +23,8 @@ public class SimpleProjectile : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        IDamageable damageScript = collision.otherCollider.GetComponentInParent<IDamageable>();
-        IHitable hitScript = collision.otherCollider.GetComponentInParent<IHitable>();
+        IDamageable damageScript = collision.gameObject.GetComponentInParent<IDamageable>();
+        IHitable hitScript = collision.gameObject.GetComponentInParent<IHitable>();
         if (damageScript != null)
         {
             damageScript.Damage(1);
@@ -34,7 +34,6 @@ public class SimpleProjectile : MonoBehaviour
             Vector3 direction = Vector3.zero;
             hitScript.Hit(direction, 1);
         }
-        Debug.Log("yeowch");
         Destroy(gameObject);
     }
 }

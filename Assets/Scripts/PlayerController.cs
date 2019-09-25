@@ -2,7 +2,10 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class PlayerController : MonoBehaviour, IKillable
+/* 
+ * Manages player input and states
+ */
+public class PlayerController : MonoBehaviour
 {
     private Rigidbody2D rb;
     private Collider2D col;
