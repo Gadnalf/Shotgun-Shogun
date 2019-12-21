@@ -8,28 +8,20 @@ public class GunControl : MonoBehaviour
     public GameObject bullet;
     public float spread;
     public int pellets;
+    public float aimSpeed = 0.8f;
 
     private bool isFlipped = false;
 
-    Transform leftShoulder;
-    Transform rightShoulder;
-    Transform leftPoint;
-    Transform rightPoint;
-    Transform leftElbow;
-
-    public void Start()
-    {
-        rightShoulder = transform.Find("Right Shoulder");
-        rightPoint = rightShoulder.Find("Hand");
-        leftShoulder = transform.Find("Left Shoulder");
-        leftPoint = leftShoulder.Find("Muzzle");
-        leftElbow = leftShoulder.Find("Elbow");
-    }
+    public Transform pivot;
+    public Transform elbow;
+    public Transform point;
 
     public void Update()
     {
         mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-        if((mousePos.x - transform.position.x) > 0 && isFlipped)
+
+        // Flip if flipping is needed
+        if ((mousePos.x - transform.position.x) > 0 && isFlipped)
         {
             transform.Rotate(new Vector3(0, 180, 0));
             isFlipped = false;
@@ -39,15 +31,15 @@ public class GunControl : MonoBehaviour
             transform.Rotate(new Vector3(0, 180, 0));
             isFlipped = true;
         }
+
         //Debug.Log("squeak: " + mousePos.ToString());
         //Debug.Log("shrug: " + leftShoulder.position);
         //Debug.Log("elbow noise: " + leftElbow.position);
 
-        double aimAngle = FindAimAngle(leftShoulder.position, leftElbow.position, mousePos, isFlipped) * (180 / Math.PI);
+        double aimAngle = FindAimAngle(pivot.position, elbow.position, point.position, mousePos, isFlipped) * (180 / Math.PI);
 
-        Vector3 rotate = new Vector3(0, 0, (float)aimAngle);
-        //rightShoulder.Rotate(rotate);
-        leftShoulder.Rotate(rotate);
+        Vector3 rotate = new Vector3(0, 0, (float)aimAngle * aimSpeed);
+        pivot.Rotate(rotate);
         if (Input.GetButtonDown("Fire1"))
         {
             Shoot();
@@ -59,8 +51,28 @@ public class GunControl : MonoBehaviour
         return Math.Sqrt(Math.Pow(a.x - b.x, 2) + Math.Pow(a.y - b.y, 2));
     }
 
-    private double FindAimAngle(Vector3 pivot, Vector3 elbow, Vector3 target, bool isFlipped)
+    private double FindAimAngle(Vector3 pivot, Vector3 elbow, Vector3 point, Vector3 target, bool isFlipped)
     {
+        // Aiming too close doesn't aim
+        double aimDist = Dist2D(pivot, target);
+        if (aimDist < Dist2D(pivot, point))
+        {
+            return 0;
+        }
+
+        bool behindShoulder = (mousePos.x - pivot.x) <= 0;
+        bool behindShoulderFlipped = (mousePos.x - pivot.x) >= 0;
+        bool aimingAbove = (mousePos.y - pivot.y) > 0;
+        // Samurai isn't flexible enough to aim behind his shoulder, sorry.
+        if (behindShoulderFlipped && isFlipped && !aimingAbove|| behindShoulder && !isFlipped && aimingAbove)
+        {
+            target = new Vector3(pivot.x + 0.001f, (float)(pivot.y + Dist2D(pivot, target)), 0);
+        }
+        if (behindShoulder && !isFlipped && !aimingAbove || behindShoulderFlipped && isFlipped && aimingAbove) 
+        {
+            target = new Vector3(pivot.x - 0.001f, (float)(pivot.y + Dist2D(pivot, target)), 0);
+        }
+
         Vector3 intersect1, intersect2;
         Vector3 mid = new Vector3((pivot.x + target.x)/2, (pivot.y + target.y) / 2, 0);
         //Debug.Log("full distance: " + Dist2D(pivot, target));
@@ -103,7 +115,7 @@ public class GunControl : MonoBehaviour
 
         if (Dist2D(pivot, elbow) <= 0)
         {
-            Debug.Log("wait, what the fuck?");
+            Debug.Log("this shouldn't be possible?");
             return 0;
         }
         //Debug.Log("We gotta angle here, between " + pivot + " and " + intersect1 + " or " + intersect2 + ". Length to mid is " + lengthToMidpoint);
@@ -170,11 +182,11 @@ public class GunControl : MonoBehaviour
             {
                 if (i % 2 == 0)
                 {
-                    Instantiate(bullet, leftPoint.position, Quaternion.Euler(leftShoulder.rotation.eulerAngles - new Vector3(0, 0, increment * (i / 2))));
+                    Instantiate(bullet, point.position, Quaternion.Euler(pivot.rotation.eulerAngles - new Vector3(0, 0, increment * (i / 2))));
                 }
                 else
                 {
-                    Instantiate(bullet, leftPoint.position, Quaternion.Euler(leftShoulder.rotation.eulerAngles + new Vector3(0, 0, increment * (i / 2))));
+                    Instantiate(bullet, point.position, Quaternion.Euler(pivot.rotation.eulerAngles + new Vector3(0, 0, increment * (i / 2))));
                 }
             }
         }

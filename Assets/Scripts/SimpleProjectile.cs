@@ -12,10 +12,9 @@ public class SimpleProjectile : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>(); 
-        rb.isKinematic = true;
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         rb.velocity = transform.right.normalized * constantVelocity;
     }
@@ -35,5 +34,6 @@ public class SimpleProjectile : MonoBehaviour
             hitScript.Hit(direction, 1);
         }
         Destroy(gameObject);
+        Debug.Log("hut");
     }
 }

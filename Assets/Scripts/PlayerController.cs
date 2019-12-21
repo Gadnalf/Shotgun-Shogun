@@ -7,19 +7,27 @@ using UnityEngine.SceneManagement;
  */
 public class PlayerController : MonoBehaviour
 {
+
     private Rigidbody2D rb;
     private Collider2D col;
     public float jumpVelocity = 7;
-    public float groundVelocity = 4;
-    public float airVelocity = 2;
+    public float runVelocity = 4;
+    public float walkVelocity = 2;
     public float fallMod = 1.5f;
     public float maxSlideTime = 1;
+    public float brakeSpeed = 0.8f;
+    public float accel = 0.2f;
 
-    // Current state data, updated every frame
+    // Character state data, updated every frame
+    private string playerState;
+    private int stateTime;
+    public bool FacingRight { get; private set; }
+
+    // Context information
     public bool Grounded { get; private set; }
+    float horizontalMovement;
     private bool touchingLeft;
     private bool touchingRight;
-    public bool FacingRight { get; private set; }
 
     // Input data
     private float horizontalInput;
@@ -38,33 +46,18 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         CheckBounds();
-        horizontalInput = Input.GetAxis("Horizontal");
-        if (Input.GetButtonDown("Jump"))
-        {
-            jumpPressed = true;
-        }
+        horizontalInput = Input.GetAxisRaw("Horizontal");
+        if (Input.GetButtonDown("Jump")) { jumpPressed = true; }
         jumpHeld = Input.GetButton("Jump");
-        duckHeld = Input.GetAxis("Vertical") < 0;
+        if (duckHeld = Input.GetAxisRaw("Vertical") < 0) { duckHeld = true; };
         shoot = Input.GetButtonDown("Fire1");
     }
 
     private void FixedUpdate()
     {
-        float horizontalMovement;
-
-        if (duckHeld && Grounded)
-        {
-            horizontalMovement = rb.velocity.x;
-        }
-        else if (Grounded)
-        {
-            horizontalMovement = horizontalInput * groundVelocity;
-        }
-        else
-        {
-            horizontalMovement = horizontalInput * airVelocity;
-        }
-
+        float horizontalMovement = rb.velocity.x;
+        float verticalMovement = rb.velocity.y;
+        
         // Set facing (for sprite purposes)
         if (horizontalInput < 0)
         {
@@ -75,14 +68,29 @@ public class PlayerController : MonoBehaviour
             FacingRight = true;
         }
 
-        rb.velocity = new Vector2(horizontalMovement, rb.velocity.y);
-
         // Grounded jump
-        if (jumpPressed && Grounded)
+        if (jumpPressed)
         {
-            rb.velocity = new Vector2(rb.velocity.x, Vector2.up.y * jumpVelocity);
-            jumpPressed = false;
+            if (Grounded)
+                {
+                    verticalMovement = jumpVelocity;
+                }
+            else if (touchingLeft)
+                {
+                    verticalMovement = (float) Math.Sqrt(jumpVelocity * jumpVelocity);
+                    horizontalMovement = jumpVelocity;
+                    playerState = "leaping";
+                }
+            else if (touchingRight)
+                {
+                    verticalMovement = (float)Math.Sqrt(jumpVelocity * jumpVelocity);
+                    horizontalMovement = -jumpVelocity;
+                    playerState = "leaping";
+                }
         }
+        jumpPressed = false;
+
+        rb.velocity = new Vector2(horizontalMovement, verticalMovement);
 
         // Faster falling for more weightiness
         if (!jumpHeld || rb.velocity.y < 0)
@@ -165,5 +173,4 @@ public class PlayerController : MonoBehaviour
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
-    
 }
