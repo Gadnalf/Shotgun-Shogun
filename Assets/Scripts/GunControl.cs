@@ -55,24 +55,22 @@ public class GunControl : MonoBehaviour
     {
         // Aiming too close doesn't aim
         double aimDist = Dist2D(pivot, target);
-        if (aimDist < Dist2D(pivot, point))
+        if (aimDist <= Dist2D(pivot, elbow))
         {
             return 0;
         }
 
+        // Samurai isn't flexible enough to aim behind his shoulder, sorry.
         bool behindShoulder = (mousePos.x - pivot.x) <= 0;
         bool behindShoulderFlipped = (mousePos.x - pivot.x) >= 0;
-        bool aimingAbove = (mousePos.y - pivot.y) > 0;
-        // Samurai isn't flexible enough to aim behind his shoulder, sorry.
-        if (behindShoulderFlipped && isFlipped && !aimingAbove|| behindShoulder && !isFlipped && aimingAbove)
+        bool behind = (behindShoulderFlipped && isFlipped) || (behindShoulder && !isFlipped);
+
+        if (behind)
         {
-            target = new Vector3(pivot.x + 0.001f, (float)(pivot.y + Dist2D(pivot, target)), 0);
-        }
-        if (behindShoulder && !isFlipped && !aimingAbove || behindShoulderFlipped && isFlipped && aimingAbove) 
-        {
-            target = new Vector3(pivot.x - 0.001f, (float)(pivot.y + Dist2D(pivot, target)), 0);
+            return 0;
         }
 
+        // A whole bunch of math to figure out how far to rotate our dude's arm.
         Vector3 intersect1, intersect2;
         Vector3 mid = new Vector3((pivot.x + target.x)/2, (pivot.y + target.y) / 2, 0);
         //Debug.Log("full distance: " + Dist2D(pivot, target));
@@ -121,14 +119,15 @@ public class GunControl : MonoBehaviour
         //Debug.Log("We gotta angle here, between " + pivot + " and " + intersect1 + " or " + intersect2 + ". Length to mid is " + lengthToMidpoint);
         double returnAngle = ((90 * Math.PI / 180) - Math.Acos(lengthToMidpoint / Dist2D(pivot, elbow))) * 2;
 
+        // Apply direction of rotation based on cross product
         double cross = ((elbow.x - pivot.x) * (newElbow.y - elbow.y)) - ((elbow.y - pivot.y) * (newElbow.x - elbow.x));
 
         if (cross < 0 && !isFlipped || cross > 0 && isFlipped)
         {
-            return returnAngle * -1;
+            returnAngle = returnAngle * -1;
         }
+
         return returnAngle;
-        
     }
 
     private int FindIntersectOfCircles(Vector3 center1, double radius1, Vector3 center2, double radius2, out Vector3 intersect1, out Vector3 intersect2)
