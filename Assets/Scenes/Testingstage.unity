@@ -348,7 +348,7 @@ MonoBehaviour:
   bullet: {fileID: 2129608845408962712, guid: c823557237827954fa3314d7a3d02dc1, type: 3}
   spread: 20
   pellets: 5
-  aimSpeed: 0.3
+  aimSpeed: 0.8
   pivot: {fileID: 1694197020}
   elbow: {fileID: 1742084990}
   point: {fileID: 814871001}
