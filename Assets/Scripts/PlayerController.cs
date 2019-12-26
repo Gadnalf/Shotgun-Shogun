@@ -10,9 +10,10 @@ public class PlayerController : MonoBehaviour
 
     private Rigidbody2D rb;
     private Collider2D col;
+    private GunControl gunCtrl;
     public float jumpVelocity = 7;
-    public float runVelocity = 4;
     public float walkVelocity = 2;
+    public float airVelocity = 0.25f;
     public float fallMod = 1.5f;
     public float maxSlideTime = 1;
     public float brakeSpeed = 0.8f;
@@ -36,11 +37,13 @@ public class PlayerController : MonoBehaviour
     private bool duckPressed;
     private bool duckHeld;
     private bool shoot;
+    private Vector2 recoil;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         col = GetComponent<Collider2D>();
+        gunCtrl = GetComponent<GunControl>();
     }
 
     private void Update()
@@ -50,47 +53,67 @@ public class PlayerController : MonoBehaviour
         if (Input.GetButtonDown("Jump")) { jumpPressed = true; }
         jumpHeld = Input.GetButton("Jump");
         if (duckHeld = Input.GetAxisRaw("Vertical") < 0) { duckHeld = true; };
-        shoot = Input.GetButtonDown("Fire1");
+        if (Input.GetButtonDown("Fire1"))
+        {
+            shoot = true;
+        }
     }
 
     private void FixedUpdate()
     {
-        float horizontalMovement = rb.velocity.x;
+        float horizontalMovement = rb.velocity.x - rb.velocity.x * Time.deltaTime;
         float verticalMovement = rb.velocity.y;
-        
-        // Set facing (for sprite purposes)
-        if (horizontalInput < 0)
+
+        // Walking and air control
+        if (Grounded)
         {
-            FacingRight = false;
+            horizontalMovement = horizontalInput * walkVelocity;
         }
-        else if (horizontalInput > 0)
+        else
         {
-            FacingRight = true;
+            if (horizontalMovement > 0 && horizontalMovement + horizontalInput * airVelocity < horizontalInput * airVelocity ||
+                horizontalMovement < 0 && horizontalMovement + horizontalInput * airVelocity > horizontalInput * airVelocity)
+            {
+                horizontalMovement = horizontalInput * airVelocity;
+            }
+            else
+            {
+                horizontalMovement = GetMaxOfAbs(horizontalMovement + horizontalInput * airVelocity, horizontalInput * airVelocity);
+            }
         }
 
         // Grounded jump
         if (jumpPressed)
         {
             if (Grounded)
-                {
-                    verticalMovement = jumpVelocity;
-                }
+            {
+                verticalMovement = jumpVelocity;
+            }
             else if (touchingLeft)
-                {
-                    verticalMovement = (float) Math.Sqrt(jumpVelocity * jumpVelocity);
-                    horizontalMovement = jumpVelocity;
-                    playerState = "leaping";
-                }
+            {
+                verticalMovement = jumpVelocity;
+                horizontalMovement = jumpVelocity * 0.75f;
+                playerState = "leaping";
+            }
             else if (touchingRight)
-                {
-                    verticalMovement = (float)Math.Sqrt(jumpVelocity * jumpVelocity);
-                    horizontalMovement = -jumpVelocity;
-                    playerState = "leaping";
-                }
+            {
+                verticalMovement = jumpVelocity;
+                horizontalMovement = -jumpVelocity * 0.75f;
+                playerState = "leaping";
+            }
         }
         jumpPressed = false;
 
         rb.velocity = new Vector2(horizontalMovement, verticalMovement);
+
+        // Gun stuff
+        if (shoot)
+        {
+            recoil = gunCtrl.Shoot();
+            rb.velocity = rb.velocity + recoil;
+
+            shoot = false;
+        }
 
         // Faster falling for more weightiness
         if (!jumpHeld || rb.velocity.y < 0)
@@ -120,7 +143,7 @@ public class PlayerController : MonoBehaviour
     {
         float offset = 0.03f;
         // These all work by drawing a line slightly offset from the edges of the collider, then checking for objects hit.
-        // Can be hypothetically modified to check for types of platforms and shit.
+        // Can be modified to check for types of platforms and shit. Should maybe expand detection.
 
         Vector2 bottomLeft = new Vector2(transform.position.x - col.bounds.extents.x, transform.position.y - col.bounds.extents.y);
         Vector2 bottomRight = new Vector2(transform.position.x + col.bounds.extents.x, transform.position.y - col.bounds.extents.y);
@@ -164,9 +187,12 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public float GetHorizontalSpeed()
+    public float GetMaxOfAbs(float a, float b)
     {
-        return Math.Abs(rb.velocity.x);
+        if (Math.Abs(a) > Math.Abs(b)) {
+            return a;
+        }
+        return b;
     }
 
     public void Kill()

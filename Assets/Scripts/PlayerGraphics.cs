@@ -6,6 +6,7 @@ public class PlayerGraphics : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private Animator animator;
     private PlayerController playerController;
+    private GunControl gunControl;
     // Start is called before the first frame update
     void Start()
     {
@@ -17,9 +18,9 @@ public class PlayerGraphics : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        spriteRenderer.flipX = !(playerController.FacingRight);
-        animator.SetBool("isWalking", (playerController.GetHorizontalSpeed() > 0.3f) && playerController.Grounded);
-        animator.SetFloat("horizontalSpeed", playerController.GetHorizontalSpeed());
+        spriteRenderer.flipX = gunControl.facingLeft;
+        //animator.SetBool("isWalking", (playerController.GetHorizontalSpeed() > 0.3f) && playerController.Grounded);
+        //animator.SetFloat("horizontalSpeed", playerController.GetHorizontalSpeed());
         //animator.SetBool("isJumping", playerController.jumpPressed);
     }
 }

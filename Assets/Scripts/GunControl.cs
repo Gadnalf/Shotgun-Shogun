@@ -9,8 +9,9 @@ public class GunControl : MonoBehaviour
     public float spread;
     public int pellets;
     public float aimSpeed = 0.8f;
+    public float recoilVelocity = 4;
 
-    private bool isFlipped = false;
+    public bool facingLeft = false;
 
     public Transform pivot;
     public Transform elbow;
@@ -21,29 +22,25 @@ public class GunControl : MonoBehaviour
         mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
 
         // Flip if flipping is needed
-        if ((mousePos.x - transform.position.x) > 0 && isFlipped)
+        if ((mousePos.x - transform.position.x) > 0 && facingLeft)
         {
             transform.Rotate(new Vector3(0, 180, 0));
-            isFlipped = false;
+            facingLeft = false;
         }
-        else if ((mousePos.x - transform.position.x) < 0 && !isFlipped)
+        else if ((mousePos.x - transform.position.x) < 0 && !facingLeft)
         {
             transform.Rotate(new Vector3(0, 180, 0));
-            isFlipped = true;
+            facingLeft = true;
         }
 
         //Debug.Log("squeak: " + mousePos.ToString());
         //Debug.Log("shrug: " + leftShoulder.position);
         //Debug.Log("elbow noise: " + leftElbow.position);
 
-        double aimAngle = FindAimAngle(pivot.position, elbow.position, point.position, mousePos, isFlipped) * (180 / Math.PI);
+        double aimAngle = FindAimAngle(pivot.position, elbow.position, point.position, mousePos, facingLeft) * (180 / Math.PI);
 
         Vector3 rotate = new Vector3(0, 0, (float)aimAngle * aimSpeed);
         pivot.Rotate(rotate);
-        if (Input.GetButtonDown("Fire1"))
-        {
-            Shoot();
-        }
     }
 
     private double Dist2D(Vector3 a, Vector3 b)
@@ -171,7 +168,8 @@ public class GunControl : MonoBehaviour
 
     }
 
-    void Shoot()
+    // Returns normalized vector representing recoil
+    public Vector2 Shoot()
     {
         float increment = spread / pellets / 2f;
 
@@ -193,6 +191,9 @@ public class GunControl : MonoBehaviour
         {
             Debug.Log("Even");
         }
-        
+
+        // Return recoil for the controller to handle movement
+        Vector3 recoil = (point.position - mousePos).normalized;
+        return new Vector2(recoil.x * recoilVelocity, recoil.y * recoilVelocity);
     }
 }

@@ -224,8 +224,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jumpVelocity: 5
-  runVelocity: 4
-  walkVelocity: 4
+  walkVelocity: 5
+  airVelocity: 0.15
   fallMod: 2.5
   maxSlideTime: 0.8
   brakeSpeed: 0.8
@@ -305,7 +305,7 @@ Transform:
   m_GameObject: {fileID: 478069948}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 3.87, y: 2.73, z: 0}
-  m_LocalScale: {x: 5, y: 5, z: 0}
+  m_LocalScale: {x: 3, y: 3, z: 0}
   m_Children:
   - {fileID: 1694197020}
   m_Father: {fileID: 0}
@@ -323,11 +323,11 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDrag: 0
+  m_Mass: 3
+  m_LinearDrag: 0.05
   m_AngularDrag: 0.05
   m_GravityScale: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 038406d55f31f594abf80664a9c44a3d, type: 2}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
@@ -349,6 +349,8 @@ MonoBehaviour:
   spread: 20
   pellets: 5
   aimSpeed: 0.8
+  recoilVelocity: 12
+  facingLeft: 0
   pivot: {fileID: 1694197020}
   elbow: {fileID: 1742084990}
   point: {fileID: 814871001}
@@ -578,7 +580,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 814871000}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.355, y: -0.011, z: 0}
+  m_LocalPosition: {x: 0.226, y: -0.011, z: 0}
   m_LocalScale: {x: 0.19142938, y: 0.029463306, z: 0}
   m_Children: []
   m_Father: {fileID: 1694197020}
@@ -749,7 +751,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 976262928}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.184, y: -0.031, z: 0}
+  m_LocalPosition: {x: 0.1, y: -0.03, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 0}
   m_Children: []
   m_Father: {fileID: 1694197020}
@@ -793,8 +795,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -6315174786939842062, guid: 9a8ef960c724b9741a226c01881bd1af,
-    type: 3}
+  m_Sprite: {fileID: 936480601474727759, guid: 9a8ef960c724b9741a226c01881bd1af, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
