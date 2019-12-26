@@ -9,9 +9,12 @@ public class GunControl : MonoBehaviour
     public float spread;
     public int pellets;
     public float aimSpeed = 0.8f;
+    public float reloadTime = 2f;
     public float recoilVelocity = 4;
 
     public bool facingLeft = false;
+    private float remainingReloadTime = 0;
+    private float ammo = 2;
 
     public Transform pivot;
     public Transform elbow;
@@ -19,6 +22,15 @@ public class GunControl : MonoBehaviour
 
     public void Update()
     {
+        if(remainingReloadTime > 0)
+        {
+            remainingReloadTime = remainingReloadTime - Time.deltaTime;
+            if(remainingReloadTime <= 0)
+            {
+                ammo = 2;
+            }
+        }
+        
         mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
 
         // Flip if flipping is needed
@@ -171,29 +183,39 @@ public class GunControl : MonoBehaviour
     // Returns normalized vector representing recoil
     public Vector2 Shoot()
     {
-        float increment = spread / pellets / 2f;
-
-        if (pellets % 2 == 1)
+        if(remainingReloadTime <= 0 || ammo > 0)
         {
-            for (int i = 1; i <= pellets; i++)
+            float increment = spread / pellets / 2f;
+
+            if (pellets % 2 == 1)
             {
-                if (i % 2 == 0)
+                for (int i = 1; i <= pellets; i++)
                 {
-                    Instantiate(bullet, point.position, Quaternion.Euler(pivot.rotation.eulerAngles - new Vector3(0, 0, increment * (i / 2))));
-                }
-                else
-                {
-                    Instantiate(bullet, point.position, Quaternion.Euler(pivot.rotation.eulerAngles + new Vector3(0, 0, increment * (i / 2))));
+                    if (i % 2 == 0)
+                    {
+                        Instantiate(bullet, point.position, Quaternion.Euler(pivot.rotation.eulerAngles - new Vector3(0, 0, increment * (i / 2))));
+                    }
+                    else
+                    {
+                        Instantiate(bullet, point.position, Quaternion.Euler(pivot.rotation.eulerAngles + new Vector3(0, 0, increment * (i / 2))));
+                    }
                 }
             }
+            else
+            {
+                Debug.Log("Even");
+            }
+
+            remainingReloadTime = reloadTime;
+            ammo = ammo - 1;
+
+            // Return recoil for the controller to handle movement
+            Vector3 recoil = (point.position - mousePos).normalized;
+            return new Vector2(recoil.x * recoilVelocity, recoil.y * recoilVelocity);
         }
         else
         {
-            Debug.Log("Even");
+            return Vector2.zero;
         }
-
-        // Return recoil for the controller to handle movement
-        Vector3 recoil = (point.position - mousePos).normalized;
-        return new Vector2(recoil.x * recoilVelocity, recoil.y * recoilVelocity);
     }
 }

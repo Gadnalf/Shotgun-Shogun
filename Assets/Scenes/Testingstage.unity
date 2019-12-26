@@ -349,7 +349,8 @@ MonoBehaviour:
   spread: 20
   pellets: 5
   aimSpeed: 0.8
-  recoilVelocity: 12
+  reloadTime: 2
+  recoilVelocity: 6
   facingLeft: 0
   pivot: {fileID: 1694197020}
   elbow: {fileID: 1742084990}
