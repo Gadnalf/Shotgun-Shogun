@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13b75c95f34a00d4e8c04f76b73312e6, type: 3}
+  m_Name: CherryBlossoms
+  m_EditorClassIdentifier: 
+  m_AnimatedSprites:
+  - {fileID: -2296831220046830163, guid: 9037ac9e76c8c254397f08ea99ac0e5e, type: 3}
+  - {fileID: -6041324922818521380, guid: 9037ac9e76c8c254397f08ea99ac0e5e, type: 3}
+  - {fileID: -3357375878046853122, guid: 9037ac9e76c8c254397f08ea99ac0e5e, type: 3}
+  - {fileID: 6860276266038835662, guid: 9037ac9e76c8c254397f08ea99ac0e5e, type: 3}
+  - {fileID: -7226244702944221975, guid: 9037ac9e76c8c254397f08ea99ac0e5e, type: 3}
+  - {fileID: -1451263800551424094, guid: 9037ac9e76c8c254397f08ea99ac0e5e, type: 3}
+  - {fileID: -5542635617163126327, guid: 9037ac9e76c8c254397f08ea99ac0e5e, type: 3}
+  - {fileID: 4666445383428421501, guid: 9037ac9e76c8c254397f08ea99ac0e5e, type: 3}
+  - {fileID: 7436877031413551148, guid: 9037ac9e76c8c254397f08ea99ac0e5e, type: 3}
+  - {fileID: -2590389126742730529, guid: 9037ac9e76c8c254397f08ea99ac0e5e, type: 3}
+  - {fileID: -3844076042159670340, guid: 9037ac9e76c8c254397f08ea99ac0e5e, type: 3}
+  - {fileID: 5308009983306947963, guid: 9037ac9e76c8c254397f08ea99ac0e5e, type: 3}
+  - {fileID: -7495709589747330487, guid: 9037ac9e76c8c254397f08ea99ac0e5e, type: 3}
+  - {fileID: -2447445454128499482, guid: 9037ac9e76c8c254397f08ea99ac0e5e, type: 3}
+  - {fileID: -3419991211359646787, guid: 9037ac9e76c8c254397f08ea99ac0e5e, type: 3}
+  - {fileID: 5495840749803082833, guid: 9037ac9e76c8c254397f08ea99ac0e5e, type: 3}
+  m_MinSpeed: 10
+  m_MaxSpeed: 10
+  m_AnimationStartTime: 0
+  m_TileColliderType: 0
